@@ -1,0 +1,23 @@
+            <!--<p>{{ _('%(nickname)', nickname='<a href="%s">%s</a>' % (url_for('user', nickname=user.nickname), user.nickname),) }}</p>-->
+
+            <p>{{ _('Followers:') }} {{ user.followers.count() - 1 }} | {{ _('Following:') }} {{ user.followed.count() - 1 }} |
+
+
+            {% elif not g.user.is_following(user) %}
+            <a href="{{ url_for('follow', nickname=user.nickname) }}">{{ _('Follow') }}</a>
+        {% else %}
+            <a href="{{ url_for('unfollow', nickname=user.nickname) }}">{{ _('Unfollow') }}</a>
+
+
+
+
+            
+            <!--<div class="control-group{% if form.password.errors %} error{% endif %}">
+                <label class="control-label" for="password">{{ _('Password:') }}</label>
+                <div class="controls">
+                    {{ form.password(maxlength=64, class="span4") }}
+                    {% for error in form.password.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>-->

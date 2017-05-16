@@ -1,0 +1,80 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+    {% include 'flash.html' %}
+    <div class="well well-large" style="height: 140px;">
+        <div class="pull-right">
+            <img src="{{ user.avatar(128) }}" class="img-polaroid" height="100" width="100">
+        </div>
+        <h1>{{ user.nickname }}</h1>
+        {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+        {% if user.last_seen %}
+        <p><em>{{ _('Last seen:') }} {{ momentjs(user.last_seen).calendar() }}</em></p>
+        {% endif %}
+        
+        {% if user.id == g.user.id %}
+            <a href="{{ url_for('edit') }}">{{ _('Edit your profile') }}</a>
+        
+        {% endif %}
+        </p>
+    </div>
+    <table>
+        <tr>
+        {% if posts3.items %}
+        <td>
+            {% if user.id == g.user.id %}
+            <h3>{{ _('Your Rideshares:') }}</h3>
+            {% else %}
+            <h3>{{ user.nickname }}'s Rideshares:</h3>
+            {% endif %}
+            {% for post in posts3.items %}
+            {% include 'post.html' %}
+            {% endfor %}
+        </td>
+        {% endif %}
+        {% if posts.items %}
+        <td>
+            {% if user.diffShare() %}
+                {% if user.id == g.user.id %}
+
+                    <h3>{{ _('Your Proposed Trips:') }}</h3>
+                    {% else %}
+                    <h3>{{ user.nickname }}'s Proposed Trips:</h3>
+                {% endif %}
+                {% for post in posts.items %}
+                    {% if not post.accepted %}
+                        {% include 'post.html' %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </td>
+        {% endif %}
+        {% if posts2.items %}
+        <td>
+            {% if g.user.id == user.id %}
+            <h3>{{ _('Requested Ridesharing:') }}</h3>
+            {% for post in posts2.items %}
+            {% include 'post.html' %}
+             {% endfor %}
+             {% endif %}
+        </td>
+        {% endif %}
+        </tr>
+    </table>
+    
+
+
+    <ul class="pager">
+        {% if posts.has_prev %}
+        <li class="previous"><a href="{{ url_for('user', nickname=user.nickname, page=posts.prev_num) }}">{{ _('Newer posts') }}</a></li>
+        {% else %}
+        <li class="previous disabled"><a href="#">{{ _('Newer posts') }}</a></li>
+        {% endif %}
+        {% if posts.has_next %}
+        <li class="next"><a href="{{ url_for('user', nickname=user.nickname, page=posts.next_num) }}">{{ _('Older posts') }}</a></li>
+        {% else %}
+        <li class="next disabled"><a href="#">{{ _('Older posts') }}</a></li>
+        {% endif %}
+    </ul>
+{% endblock %}

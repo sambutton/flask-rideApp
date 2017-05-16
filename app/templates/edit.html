@@ -1,0 +1,186 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>{{ _('Edit Your Profile') }}</h1>
+    {% include 'flash.html' %}
+    <div class="well">
+
+        <form class="form-horizontal" action="" method="post" name="edit">
+            {{ form.hidden_tag() }}
+            
+            <div class="controls" height="75" width="75">
+                <img id="preview" class="img-polaroid" src="{{ user.avatar(70) }}" height="75" width="75" />
+            </div>
+            <div class="control-group{% if form.photo.errors %} error{% endif %}">
+                <label class="control-label" for="photo">{{ _('Your photo:') }}</label>
+                <div class="controls">
+                    {{ form.photo() }}
+                    {% for error in form.photo.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group{% if form.avatar_url.errors %} error{% endif %}">
+                <label class="control-label" for="avatar_url"></label>
+                <div class="controls">
+                    {{ form.avatar_url() }}
+                    {% for error in form.avatar_url.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group{% if form.nickname.errors %} error{% endif %}">
+                <label class="control-label" for="nickname">{{ _('Your nickname:') }}</label>
+                <div class="controls">
+                    {{ form.nickname(maxlength=64, class="span4") }}
+                    {% for error in form.nickname.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group{% if form.about_me.errors %} error{% endif %}">
+                <label class="control-label" for="about_me">{{ _('About yourself:') }}</label>
+                <div class="controls">
+                    {{ form.about_me(cols=64, rows=4, class="span4") }}
+                    {% for error in form.about_me.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="control-group{% if form.email.errors %} error{% endif %}">
+                <label class="control-label" for="email">{{ _('Email:') }}</label>
+                <div class="controls">
+                    {{ form.email(maxlength=64, class="span4") }}
+                    {% for error in form.email.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>
+
+
+            <div class="control-group{% if form.address.errors %} error{% endif %}">
+                <label class="control-label" for="address">{{ _('Address:') }}</label>
+                <div class="controls">
+                    {{ form.address(maxlength=64, class="span4") }}
+                    {% for error in form.address.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="control-group{% if form.city.errors %} error{% endif %}">
+                <label class="control-label" for="city">{{ _('City:') }}</label>
+                <div class="controls">
+                    {{ form.city(maxlength=64, class="span4") }}
+                    {% for error in form.city.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>           
+            
+            <div class="control-group{% if form.state.errors %} error{% endif %}">
+                <label class="control-label" for="state">{{ _('State:') }}</label>
+                <div class="controls">
+                    {{ form.state(maxlength=64, class="span4") }}
+                    {% for error in form.state.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="control-group{% if form.zipcode.errors %} error{% endif %}">
+                <label class="control-label" for="zipcode">{{ _('Zipcode:') }}</label>
+                <div class="controls">
+                    {{ form.zipcode(maxlength=64, class="span4") }}
+                    {% for error in form.zipcode.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>            
+
+
+
+            <div class="control-group">
+                <div class="controls">
+                    <input class="btn btn-primary" type="submit" value="{{ _('Save Changes') }}">
+                </div>
+            </div>
+        </form>
+        <script>
+        /*
+          Function to carry out the actual POST request to S3 using the signed request from the Python app.
+            */
+        function uploadFile(file, s3Data, url){
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', s3Data.url);
+            xhr.setRequestHeader('x-amz-acl', 'public-read');
+            const postData = new FormData();
+            for(key in s3Data.fields){
+                postData.append(key, s3Data.fields[key]);
+            }
+            postData.append('file', file);
+            xhr.onreadystatechange = function() {
+                if(xhr.readyState === 4){
+                    if(xhr.status === 200 || xhr.status === 204){
+                        document.getElementById('preview').src = url;
+                        document.getElementById('avatar_url').value = url;
+                    }
+                    else{
+                        alert('Could not upload file.');
+                    }
+                }
+            };
+            
+            xhr.send(postData);
+        }
+
+/*
+    Function to get the temporary signed request from the Python app.
+    If request successful, continue to upload the file using this signed
+    request.
+    */
+    function getSignedRequest(file){
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', `/sign_s3?file_name=${file.name}&file_type=${file.type}`);
+        
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState === 4){
+                console.log(xhr.status)
+                if(xhr.status === 200){
+                const response = JSON.parse(xhr.responseText);
+                uploadFile(file, response.data, response.url);
+                }
+                else {
+                    alert('Could not get signed URL.');
+                }
+            }
+        };
+        
+        xhr.send();
+    }
+
+        /*
+            Function called when file input updated. If there is a file selected, then
+            start upload procedure by asking for a signed request from the app.
+        */
+        function initUpload(){
+            const files = document.getElementById('photo').files;
+            const file = files[0];
+            if(!file){
+                return alert('No file selected.');
+            }
+            getSignedRequest(file);
+        }
+
+        /*
+           Bind listeners when the page loads.
+        */
+        (() => {
+          document.getElementById('photo').onchange = initUpload;
+        })()
+
+        </script>
+    </div>
+{% endblock %}

@@ -1,0 +1,87 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+<div class="well">
+        <h3>{{ _('Please enter your information here:') }}</h3>
+        <form class="form" action="" method="post" name="signup">
+            {{ form.hidden_tag() }}
+            <div class="control-group{% if form.name.errors %} error{% endif %}">
+                <label class="control-label" for="name">{{ _('Name:') }}</label>
+                <div class="controls">
+                    {{ form.name(size=80, class="span4") }}
+                    {% for error in form.name.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group{% if form.email.errors %} error{% endif %}">
+                <label class="control-label" for="email">{{ _('Email:') }}</label>
+                <div class="controls">
+                    {{ form.email(size=80, class="span4") }}
+                    {% for error in form.email.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group{% if form.password.errors %} error{% endif %}">
+                <label class="control-label" for="password">{{ _('Password:') }}</label>
+                <div class="controls">
+                    {{ form.password(size=80, class="span4") }}
+                    {% for error in form.password.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group{% if form.address.errors %} error{% endif %}">
+                <label class="control-label" for="address">{{ _('Address:') }}</label>
+                <div class="controls">
+                    {{ form.address(size=80, class="span4") }}
+                    {% for error in form.address.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group{% if form.city.errors %} error{% endif %}">
+                <label class="control-label" for="city">{{ _('City:') }}</label>
+                <div class="controls">
+                    {{ form.city(size=80, class="span4") }}
+                    {% for error in form.city.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group{% if form.state.errors %} error{% endif %}">
+                <label class="control-label" for="state">{{ _('State:') }}</label>
+                <div class="controls">
+                    {{ form.state(size=80, class="span4") }}
+                    {% for error in form.state.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group{% if form.zipcode.errors %} error{% endif %}">
+                <label class="control-label" for="zipcode">{{ _('Zipcode:') }}</label>
+                <div class="controls">
+                    {{ form.zipcode(size=80, class="span4") }}
+                    {% for error in form.zipcode.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <label class="checkbox" for="remember_me">
+                        {{ form.remember_me }} {{ _('Remember Me') }}
+                    </label>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <input class="btn btn-primary" type="submit" value="{{ _('Sign Up') }}">
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

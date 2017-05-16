@@ -1,0 +1,14 @@
+<p>Dear {{ user.nickname }},</p>
+
+{% autoescape false %}
+<p>{{ _('%(nickname)s would like to rideshare!', nickname='<a href="' + url_for("user", nickname=follower.nickname, _external=True) + '">' + follower.nickname + '</a>') }}</p>
+{% endautoescape %}
+<table>
+    <tr valign="top">
+        <td>
+            <a href="{{ url_for('user', nickname=user.nickname, _external=True)}}">See the post on your profile.</a><br />
+        </td>
+    </tr>
+</table>
+<p>{{ _('Happy Travels,') }}</p>
+<p>{{ _('<code>Out &amp; About</code>') }}</p>

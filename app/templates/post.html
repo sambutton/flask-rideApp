@@ -1,0 +1,52 @@
+
+
+<table class="table table-hover">
+    <tr>
+        <td width="70px"><a href="{{ url_for('user', nickname=post.author.nickname) }}"><img src="{{ post.author.avatar(70) }}" class="img-polaroid" height="75" width="75"/></a></td>
+        <td>
+
+
+
+            {% autoescape false %}
+            <p>{{ _('%(when)s:' , when=momentjs(post.timestamp).fromNow() ) }}</p>
+
+            <p> {{ _('%(nickname)s', nickname='<a href="%s">%s</a>' % (url_for('user', nickname=post.author.nickname), post.author.nickname)) }}
+             <span id="destination{{ post.id }}">is going to {{ post.destination }} <span id="daytime{{ post.id }}">on {{momentjs(post.trip_date).format('dddd MMMM DD, YYYY')}} at {{momentjs(post.trip_time).format('h:mm A')}}, </span>{% if post.needRide %}
+            <span id="need{{ post.id }}"> and is looking for a ride with {{ post.seats}} seat{% if post.seats != 1 %}s{% endif %} in the car.</span>
+            {% else %}
+            <span id="offer{{ post.id }}">and is offering a ride with {{ post.seats}} seat{% if post.seats != 1 %}s{% endif %} in the car.</span></p>
+            {% endif %}
+
+            <p><span id="body{{ post.id }}"><strong> {{ post.body }} </strong></span></p>
+            
+
+
+             {% if post.author.id == g.user.id %}
+                {% if post.accepted %}
+                    <p style="color:green;">{{ _('Rideshare accepted with:') }} {% for userzaz in post.allSharers() %}
+                            {{ _('%(nickname)s', nickname='<a href="%s">%s</a>' % (url_for('user', nickname=userzaz.nickname), userzaz.nickname)) }}. 
+                        {% endfor %}</p>
+                {% else %}
+                    {% if post.hasFollowers() %}
+                        {% for user in post.allFollowers() %}
+                            {{ user.nickname }} would like to rideshare! <a class="btn btn-success" href="{{ url_for('accept', idU = user.id, post_id = post.id) }}">       {{ _('Accept') }}</a> <a class="btn btn-warning" href="{{ url_for('reject', idU = user.id, post_id = post.id) }}">{{ _('No thanks!') }}</a><br><br>
+                        {% endfor %}
+                    {% endif %}
+                    <a class="btn btn-danger" href="{{ url_for('delete', id = post.id) }}">{{ _('Delete Post') }}</a>
+                {% endif %}
+            
+            {% elif post.is_sharingWith(g.user) %}
+                <p style="color:green;">{{ _('Rideshare approved by:') }} 
+                            {{ _('%(nickname)s', nickname='<a href="%s">%s</a>' % (url_for('user', nickname=post.author.nickname), post.author.nickname)) }}.</p>
+
+            {% elif post.is_followedBy(g.user) %}
+            <a class="btn btn-success" href="{{ url_for('user', nickname=post.author.nickname) }}">{{ _('Rideshare Request Sent!') }}</a> <a class="btn btn-danger" href="{{ url_for('unRequestTrip', post_id=post.id) }}">Cancel</a>
+            {% else %}
+            <a class="btn btn-primary" href="{{ url_for('requestTrip', post_id=post.id) }}">{{ _('I would like to join your trip!') }}</a>
+            {% endif %}
+
+
+            {% endautoescape %}
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,9 @@
+{{ _('Dear %(nickname)s,', nickname=user.nickname) }}
+
+{{ _('%(nickname)s would like to rideshare! Click on the following link to visit the post:', nickname=follower.nickname) }}
+
+{{ url_for("user", nickname=user.nickname, _external=True) }}
+
+{{ _('Happy Travels,') }}
+
+{{ _('Out &amp; About') }}
