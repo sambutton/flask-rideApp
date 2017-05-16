@@ -16,7 +16,7 @@ OPENID_PROVIDERS = [
     {'name': 'Flickr', 'url': 'http://www.flickr.com/<username>'},
     {'name': 'MyOpenID', 'url': 'https://www.myopenid.com'}]
 
-SQLALCHEMY_DATABASE_URI = 'mysql://bcd88be69119fd:4ac6a98f@us-cdbr-iron-east-03.cleardb.net/heroku_83f6f8d3b08c399?reconnect=true'
+SQLALCHEMY_DATABASE_URI = 'postgresql://sammy:button16@localhost/rideapp'
 #SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SQLALCHEMY_RECORD_QUERIES = True
